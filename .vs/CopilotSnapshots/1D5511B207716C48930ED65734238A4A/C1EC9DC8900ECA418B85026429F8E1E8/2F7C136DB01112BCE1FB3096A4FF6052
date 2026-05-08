@@ -1,4 +1,4 @@
-const MAX_APNG_BYTES = 512 * 1024;
+﻿const MAX_APNG_BYTES = 512 * 1024;
 const MAX_APNG_SIZE = 320;
 const PNG_SIZES = [112, 128];
 
@@ -149,14 +149,9 @@ async function buildOutputs(file) {
   const originalBaseName = getBaseName(file.name || "image");
 
   setProgress(15, "Rendering outputs...");
-  for (let idx = 0; idx < PNG_SIZES.length; idx++) {
-    const size = PNG_SIZES[idx];
-    const progressPercent = 15 + (idx * 10);
-    setProgress(progressPercent, `Rendering ${size}x${size}...`);
+  for (const size of PNG_SIZES) {
     const blob = outputIsGif
-      ? await renderGifBlob(sourceFrames.frames, delayArray, size, size, (p) => {
-          setProgress(progressPercent + (p * 0.1 * 9), `Rendering ${size}x${size} (${Math.round(p)}%)`);
-        })
+      ? await renderGifBlob(sourceFrames.frames, delayArray, size, size)
       : await renderPngBlob(sourceFrames.frames[0], size, size);
     const targetPreview = size === 112 ? png112Preview : png128Preview;
     const targetDownload = size === 112 ? download112 : download128;
@@ -164,18 +159,10 @@ async function buildOutputs(file) {
     const labelType = outputIsGif ? "GIF" : "PNG";
     targetDownload.textContent = `Download ${size}x${size} ${labelType}`;
     attachPreviewAndDownload(targetPreview, targetDownload, blob, `${originalBaseName}-${size}.${extension}`);
+    setProgress(35, "Rendering APNG...");
   }
 
-  setProgress(40, "Generating APNG...");
-  const apngResult = await createApngWithinLimit(
-    sourceFrames.frames,
-    delayArray,
-    MAX_APNG_SIZE,
-    MAX_APNG_BYTES,
-    (p) => {
-      setProgress(40 + (p * 0.6), `Generating APNG (${Math.round(p)}%)`);
-    }
-  );
+  const apngResult = await createApngWithinLimit(sourceFrames.frames, delayArray, MAX_APNG_SIZE, MAX_APNG_BYTES);
   attachPreviewAndDownload(
     apngPreview,
     downloadApng,
@@ -295,7 +282,7 @@ async function renderPngBlob(sourceCanvas, width, height) {
   return await canvasToBlob(canvas, "image/png");
 }
 
-async function renderGifBlob(frames, delays, width, height, progressCallback = () => {}) {
+async function renderGifBlob(frames, delays, width, height) {
   if (typeof window.GifWriter !== "function") {
     throw new Error("GIF encoder not available.");
   }
@@ -315,25 +302,18 @@ async function renderGifBlob(frames, delays, width, height, progressCallback = (
       transparent: 0,
       disposal: 2,
     });
-    progressCallback(((i + 1) / frames.length) * 100);
   }
 
   const used = writer.end();
   return new Blob([out.slice(0, used)], { type: "image/gif" });
 }
 
-async function createApngWithinLimit(frames, delays, maxSize, maxBytes, progressCallback = () => {}) {
+async function createApngWithinLimit(frames, delays, maxSize, maxBytes) {
   const colorTrials = [256, 192, 128, 96, 64];
   const sizeStep = 16;
   let best = null;
 
-  const sizes = [];
-  for (let s = maxSize; s >= 64; s -= sizeStep) sizes.push(s);
-  const totalAttempts = sizes.length * colorTrials.length;
-  let attemptIndex = 0;
-
-  for (let sizeIdx = 0; sizeIdx < sizes.length; sizeIdx++) {
-    const size = sizes[sizeIdx];
+  for (let size = maxSize; size >= 64; size -= sizeStep) {
     const resizedBuffers = await Promise.all(
       frames.map(async (frame) => {
         const resized = resizeCanvasContain(frame, size, size);
@@ -341,25 +321,17 @@ async function createApngWithinLimit(frames, delays, maxSize, maxBytes, progress
       })
     );
 
-    for (let colorIdx = 0; colorIdx < colorTrials.length; colorIdx++) {
-      const colors = colorTrials[colorIdx];
-      attemptIndex++;
-      progressCallback((attemptIndex / totalAttempts) * 100);
-      
+    for (const colors of colorTrials) {
       const encoded = UPNG.encode(resizedBuffers, size, size, colors, delays);
       const blob = new Blob([encoded], { type: "image/apng" });
       const candidate = { blob, colors, size };
 
       if (!best || candidate.blob.size < best.blob.size) best = candidate;
-      if (blob.size <= maxBytes) {
-        progressCallback(100);
-        return candidate;
-      }
+      if (blob.size <= maxBytes) return candidate;
     }
   }
 
   if (!best) throw new Error("APNG generation failed.");
-  progressCallback(100);
   return best;
 }
 

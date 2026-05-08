@@ -1,4 +1,4 @@
-const MAX_APNG_BYTES = 512 * 1024;
+﻿const MAX_APNG_BYTES = 512 * 1024;
 const MAX_APNG_SIZE = 320;
 const PNG_SIZES = [112, 128];
 
@@ -322,18 +322,12 @@ async function renderGifBlob(frames, delays, width, height, progressCallback = (
   return new Blob([out.slice(0, used)], { type: "image/gif" });
 }
 
-async function createApngWithinLimit(frames, delays, maxSize, maxBytes, progressCallback = () => {}) {
+async function createApngWithinLimit(frames, delays, maxSize, maxBytes) {
   const colorTrials = [256, 192, 128, 96, 64];
   const sizeStep = 16;
   let best = null;
 
-  const sizes = [];
-  for (let s = maxSize; s >= 64; s -= sizeStep) sizes.push(s);
-  const totalAttempts = sizes.length * colorTrials.length;
-  let attemptIndex = 0;
-
-  for (let sizeIdx = 0; sizeIdx < sizes.length; sizeIdx++) {
-    const size = sizes[sizeIdx];
+  for (let size = maxSize; size >= 64; size -= sizeStep) {
     const resizedBuffers = await Promise.all(
       frames.map(async (frame) => {
         const resized = resizeCanvasContain(frame, size, size);
@@ -341,25 +335,17 @@ async function createApngWithinLimit(frames, delays, maxSize, maxBytes, progress
       })
     );
 
-    for (let colorIdx = 0; colorIdx < colorTrials.length; colorIdx++) {
-      const colors = colorTrials[colorIdx];
-      attemptIndex++;
-      progressCallback((attemptIndex / totalAttempts) * 100);
-      
+    for (const colors of colorTrials) {
       const encoded = UPNG.encode(resizedBuffers, size, size, colors, delays);
       const blob = new Blob([encoded], { type: "image/apng" });
       const candidate = { blob, colors, size };
 
       if (!best || candidate.blob.size < best.blob.size) best = candidate;
-      if (blob.size <= maxBytes) {
-        progressCallback(100);
-        return candidate;
-      }
+      if (blob.size <= maxBytes) return candidate;
     }
   }
 
   if (!best) throw new Error("APNG generation failed.");
-  progressCallback(100);
   return best;
 }
 

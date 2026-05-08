@@ -1,4 +1,4 @@
-* {
+﻿* {
   box-sizing: border-box;
 }
 
@@ -34,7 +34,6 @@ h1 {
   padding: 16px;
   border-radius: 10px;
   margin-bottom: 20px;
-  width: 100%;
 }
 
 .file-label {
@@ -81,12 +80,21 @@ h1 {
   color: #eff6ff;
 }
 
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 500px;
+  justify-content: center;
+}
+
 .progress-container {
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 100%;
-  max-width: 500px;
+  flex: 1;
+  max-width: 220px;
 }
 
 #processProgress {
@@ -125,11 +133,12 @@ h1 {
   border-radius: 8px;
   cursor: pointer;
   white-space: nowrap;
-  align-self: flex-start;
 }
 
 #status {
-  display: none;
+  margin: 0;
+  min-height: 20px;
+  color: #93c5fd;
 }
 
 .grid {

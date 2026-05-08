@@ -1,4 +1,4 @@
-const MAX_APNG_BYTES = 512 * 1024;
+﻿const MAX_APNG_BYTES = 512 * 1024;
 const MAX_APNG_SIZE = 320;
 const PNG_SIZES = [112, 128];
 

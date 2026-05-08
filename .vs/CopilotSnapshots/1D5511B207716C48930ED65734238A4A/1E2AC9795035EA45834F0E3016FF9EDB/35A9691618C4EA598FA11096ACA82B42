@@ -1,4 +1,4 @@
-* {
+﻿* {
   box-sizing: border-box;
 }
 
@@ -81,12 +81,20 @@ h1 {
   color: #eff6ff;
 }
 
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 500px;
+}
+
 .progress-container {
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 100%;
-  max-width: 500px;
+  flex: 1;
+  max-width: 220px;
 }
 
 #processProgress {
@@ -125,7 +133,7 @@ h1 {
   border-radius: 8px;
   cursor: pointer;
   white-space: nowrap;
-  align-self: flex-start;
+  flex-shrink: 0;
 }
 
 #status {
