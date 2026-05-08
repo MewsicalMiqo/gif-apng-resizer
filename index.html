@@ -14,10 +14,11 @@
       </p>
 
       <section class="panel">
-        <label for="fileInput" class="file-label">Choose GIF or PNG</label>
-        <input id="fileInput" type="file" accept="image/png,image/gif" />
-        <div id="dropZone" class="drop-zone" role="button" tabindex="0" aria-label="Drag and drop GIF or PNG">
-          Drag and drop a GIF/PNG here
+        <div id="pickerArea" class="picker-area">
+          <label for="fileInput" class="file-label">Choose a GIF/PNG or drag and drop here</label>
+          <input id="fileInput" type="file" accept="image/png,image/gif" />
+          <div id="dropZone" class="drop-zone" aria-label="Drag and drop GIF or PNG">
+          </div>
         </div>
         <button id="processBtn" disabled>Process Image</button>
         <p id="status" aria-live="polite"></p>

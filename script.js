@@ -4,6 +4,7 @@ const PNG_SIZES = [112, 128];
 
 const fileInput = document.getElementById("fileInput");
 const dropZone = document.getElementById("dropZone");
+const pickerArea = document.getElementById("pickerArea");
 const processBtn = document.getElementById("processBtn");
 const statusEl = document.getElementById("status");
 
@@ -48,20 +49,20 @@ processBtn.addEventListener("click", async () => {
 });
 
 ["dragenter", "dragover"].forEach((eventName) => {
-  dropZone.addEventListener(eventName, (event) => {
+  pickerArea.addEventListener(eventName, (event) => {
     event.preventDefault();
     dropZone.classList.add("active");
   });
 });
 
 ["dragleave", "drop"].forEach((eventName) => {
-  dropZone.addEventListener(eventName, (event) => {
+  pickerArea.addEventListener(eventName, (event) => {
     event.preventDefault();
     dropZone.classList.remove("active");
   });
 });
 
-dropZone.addEventListener("drop", (event) => {
+pickerArea.addEventListener("drop", (event) => {
   const droppedFile = event.dataTransfer?.files?.[0] ?? null;
   setSelectedFile(droppedFile);
 });

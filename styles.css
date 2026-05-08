@@ -37,21 +37,44 @@ h1 {
 
 .file-label {
   font-weight: 600;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.picker-area {
+  position: relative;
+  width: 100%;
+  min-height: 120px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 6px;
+}
+
+#fileInput {
+  position: relative;
+  z-index: 2;
 }
 
 .drop-zone {
-  min-width: 220px;
+  position: absolute;
+  inset: 0;
   padding: 12px;
   border: 2px dashed #4b5563;
   border-radius: 8px;
   text-align: center;
   color: #d1d5db;
-  background: #111827;
+  background: rgba(17, 24, 39, 0.45);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .drop-zone.active {
   border-color: #60a5fa;
-  background: #1e3a8a;
+  background: rgba(30, 58, 138, 0.6);
   color: #eff6ff;
 }
 
