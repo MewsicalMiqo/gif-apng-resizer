@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GIF/PNG Resizer + APNG Export</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>GIF/PNG Resizer + APNG Export</h1>
+      <p class="subtitle">
+        Upload a GIF or PNG, generate 112x112 and 128x128 PNG files, and produce an APNG up to 320x320 that stays under 512KB.
+      </p>
+
+      <section class="panel">
+        <label for="fileInput" class="file-label">Choose GIF or PNG</label>
+        <input id="fileInput" type="file" accept="image/png,image/gif" />
+        <div id="dropZone" class="drop-zone" role="button" tabindex="0" aria-label="Drag and drop GIF or PNG">
+          Drag and drop a GIF/PNG here
+        </div>
+        <button id="processBtn" disabled>Process Image</button>
+        <p id="status" aria-live="polite"></p>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>Original</h2>
+          <div id="originalPreview" class="preview-box"></div>
+        </article>
+        <article class="card">
+          <h2>112x112 Output</h2>
+          <div id="png112Preview" class="preview-box"></div>
+          <button id="download112" class="download-btn hidden" type="button">Download 112x112</button>
+        </article>
+        <article class="card">
+          <h2>128x128 Output</h2>
+          <div id="png128Preview" class="preview-box"></div>
+          <button id="download128" class="download-btn hidden" type="button">Download 128x128</button>
+        </article>
+        <article class="card">
+          <h2>APNG (<=512KB, up to 320px)</h2>
+          <div id="apngPreview" class="preview-box"></div>
+          <p id="apngMeta" class="meta"></p>
+          <button id="downloadApng" class="download-btn hidden" type="button">Download APNG</button>
+        </article>
+      </section>
+    </main>
+
+    <script src="./vendor/pako.min.js"></script>
+    <script src="./vendor/UPNG.min.js"></script>
+    <script src="./vendor/omggif.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
