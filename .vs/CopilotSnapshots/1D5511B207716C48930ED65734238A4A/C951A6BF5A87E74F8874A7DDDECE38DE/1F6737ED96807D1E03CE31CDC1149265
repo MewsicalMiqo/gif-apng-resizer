@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -21,11 +21,9 @@
           </div>
         </div>
 
-        <div class="controls">
-          <button id="processBtn" disabled>Process Image</button>
-          <span id="throbber" class="throbber hidden" aria-hidden="true"></span>
-          <p id="status" aria-live="polite"></p>
-        </div>
+        <button id="processBtn" disabled>Process Image</button>
+
+        <p id="status" aria-live="polite"></p>
       </section>
 
       <section class="grid">

@@ -1,4 +1,4 @@
-* {
+﻿* {
   box-sizing: border-box;
 }
 
@@ -50,15 +50,14 @@ h1 {
   max-width: 500px;
   min-height: 120px;
   display: grid;
-  align-content: center;
-  justify-items: center;
+  align-content: start;
+  justify-items: start;
   gap: 6px;
 }
 
 #fileInput {
   position: relative;
   z-index: 2;
-  display: inline-block;
 }
 
 .drop-zone {

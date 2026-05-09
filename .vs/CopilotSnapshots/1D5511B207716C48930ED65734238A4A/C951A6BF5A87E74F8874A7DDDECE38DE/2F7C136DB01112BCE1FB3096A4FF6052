@@ -1,4 +1,4 @@
-const MAX_APNG_BYTES = 512 * 1024;
+﻿const MAX_APNG_BYTES = 512 * 1024;
 const MAX_APNG_SIZE = 320;
 const PNG_SIZES = [112, 128];
 
@@ -7,7 +7,9 @@ const dropZone = document.getElementById("dropZone");
 const pickerArea = document.getElementById("pickerArea");
 const processBtn = document.getElementById("processBtn");
 const statusEl = document.getElementById("status");
-const throbber = document.getElementById("throbber");
+const progressContainer = document.getElementById("progressContainer");
+const processProgress = document.getElementById("processProgress");
+const progressLabel = document.getElementById("progressLabel");
 
 const originalPreview = document.getElementById("originalPreview");
 const png112Preview = document.getElementById("png112Preview");
@@ -31,16 +33,17 @@ processBtn.addEventListener("click", async () => {
   try {
     setStatus("Processing...");
     processBtn.disabled = true;
-    if (throbber) throbber.classList.remove("hidden");
+    showProgress();
+    setProgress(0, "Starting...");
     await buildOutputs(selectedFile);
-    setStatus("Done.");
+    setProgress(100, "Done");
     setStatus("Done.");
   } catch (error) {
     console.error(error);
     setStatus(`Failed: ${error.message}`);
   } finally {
     processBtn.disabled = false;
-    if (throbber) setTimeout(() => throbber.classList.add("hidden"), 600);
+    setTimeout(hideProgress, 700);
   }
 });
 
@@ -75,9 +78,20 @@ function setStatus(text) {
   statusEl.textContent = text;
 }
 
+function showProgress() {
+  if (progressContainer && progressContainer.classList) progressContainer.classList.remove("hidden");
+}
+
+function hideProgress() {
+  if (progressContainer && progressContainer.classList) progressContainer.classList.add("hidden");
+  if (processProgress) processProgress.value = 0;
+  if (progressLabel) progressLabel.textContent = "";
+}
+
 function setProgress(percent, label) {
-  // Keep status text in sync with progress when available
-  if (typeof label === "string") setStatus(label);
+  const clamped = Math.max(0, Math.min(100, Math.round(percent)));
+  if (processProgress) processProgress.value = clamped;
+  if (progressLabel) progressLabel.textContent = label || `${clamped}%`;
 }
 
 function isSupportedType(file) {
